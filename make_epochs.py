@@ -6,14 +6,8 @@ import numpy as np
 
 def make_epochs(raw):
 
-    print(raw.info['events'])
-    if raw.info['events'] is True:
-        print('events')
-    else:
-        print('no events')
-    
-    # create fixed length events
-    array_events = mne.make_fixed_length_events(raw, duration=10)
+    # Convert tsv file into 
+    array_events = np.loadtxt(fname=events, delimiter="\t")
 
     # create epochs
     epoched_data = mne.Epochs(raw, array_events)
@@ -33,12 +27,24 @@ def main():
     with open('config.json') as config_json:
         config = json.load(config_json)
 
-    # Read the files
+    # Read the MEG file 
     data_file = config.pop('fif')
     raw = mne.io.read_raw_fif(data_file, allow_maxshield=True)
 
+    # Read the events file
+    events = config.pop('events')
+
+    # See if the data contains events
+    # print(raw.info['events'])
+    # if raw.info['events'] is True:
+    #     print('events')
+    # else:
+    #     print('no events')
+    
+
+
     # Epoch data
-    epoched_data = make_epochs(raw)
+    epoched_data = make_epochs(raw, events)
 
     # Success message in product.json    
     dict_json_product['brainlife'].append({'type': 'success', 'msg': 'Data was successfully epoched.'})
