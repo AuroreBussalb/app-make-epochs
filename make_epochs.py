@@ -13,7 +13,7 @@ def make_epochs(raw):
     epoched_data = mne.Epochs(raw, array_events)
 
     # Save file
-    data_filtered.save("out_dir_make_epochs/meg.fif", overwrite=True)
+    epoched_data.save("out_dir_make_epochs/meg.fif", overwrite=True)
 
     return epoched_data
 
