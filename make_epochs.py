@@ -4,6 +4,7 @@ import json
 import mne
 import numpy as np
 import warnings
+import os 
 
 def make_epochs(raw, events):
 
