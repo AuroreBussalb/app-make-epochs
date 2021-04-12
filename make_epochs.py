@@ -48,7 +48,7 @@ def main():
         warnings.warn(user_warning_message)
         dict_json_product['brainlife'].append({'type': 'info', 'msg': user_warning_message})
     else:
-    	user_warning_message = f'You are going to create epochs from events ' \
+        user_warning_message = f'You are going to create epochs from events ' \
                                f'created beforehand.'
         warnings.warn(user_warning_message)
         dict_json_product['brainlife'].append({'type': 'info', 'msg': user_warning_message})
