@@ -6,11 +6,11 @@ import numpy as np
 
 def make_epochs(raw):
 
-	print(raw.info['events'])
-	if raw.info['events'] is True:
-	    print('events')
-	else:
-		print('no events')
+    print(raw.info['events'])
+    if raw.info['events'] is True:
+        print('events')
+    else:
+        print('no events')
     
     # create fixed length events
     array_events = mne.make_fixed_length_events(raw, duration=10)
