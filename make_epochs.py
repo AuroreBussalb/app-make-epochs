@@ -8,6 +8,7 @@ def make_epochs(raw, events):
 
     # Convert tsv file into 
     array_events = np.loadtxt(fname=events, delimiter="\t")
+    array_events.ravel()
 
     # create epochs
     epoched_data = mne.Epochs(raw, array_events)
