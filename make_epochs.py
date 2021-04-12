@@ -3,16 +3,20 @@
 import json
 import mne
 import numpy as np
+import warnings
 
 def make_epochs(raw, events):
 
-    # Convert tsv file into 
-    array_events = np.loadtxt(fname=events, delimiter="\t")
-    array_events = array_events.astype(int)
-    print(array_events)
+    if events is not None:
+        # Convert tsv file into an numpy array
+        array_events = np.loadtxt(fname=events, delimiter="\t")
+        events = array_events.astype(int)
 
-    # create epochs
-    epoched_data = mne.Epochs(raw, array_events)
+    else:
+        events = mne.find_events(raw)
+
+    # Create epochs from events
+    epoched_data = mne.Epochs(raw, events)
 
     # Save file
     epoched_data.save("out_dir_make_epochs/meg.fif", overwrite=True)
@@ -36,14 +40,18 @@ def main():
     # Read the events file
     events = config.pop('events')
 
-    # See if the data contains events
-    # print(raw.info['events'])
-    # if raw.info['events'] is True:
-    #     print('events')
-    # else:
-    #     print('no events')
-    
-
+    # Test if events file exist
+    if os.path.exists(events_file) is False:
+        events = None
+        user_warning_message = f'You are going to create epochs from events ' \
+                               f'contained in your fif file.'
+        warnings.warn(user_warning_message)
+        dict_json_product['brainlife'].append({'type': 'info', 'msg': user_warning_message})
+    else:
+    	user_warning_message = f'You are going to create epochs from events ' \
+                               f'created beforehand.'
+        warnings.warn(user_warning_message)
+        dict_json_product['brainlife'].append({'type': 'info', 'msg': user_warning_message})
 
     # Epoch data
     epoched_data = make_epochs(raw, events)
