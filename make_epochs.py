@@ -4,7 +4,7 @@ import json
 import mne
 import numpy as np
 
-def make_epochs(raw):
+def make_epochs(raw, events):
 
     # Convert tsv file into 
     array_events = np.loadtxt(fname=events, delimiter="\t")
