@@ -39,7 +39,7 @@ def main():
     raw = mne.io.read_raw_fif(data_file, allow_maxshield=True)
 
     # Read the events file
-    events = config.pop('events')
+    events_file = config.pop('events')
 
     # Test if events file exist
     if os.path.exists(events_file) is False:
