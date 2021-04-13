@@ -9,7 +9,7 @@ import os
 def make_epochs(raw, events):
 
     if events is not None:
-        # Convert tsv file into an numpy array
+        # Convert tsv file into an numpy array of integers
         array_events = np.loadtxt(fname=events, delimiter="\t")
         events = array_events.astype(int)
 
@@ -43,7 +43,7 @@ def main():
 
     # Test if events file exist
     if os.path.exists(events_file) is False:
-        events = None
+        events_file = None
         user_warning_message = f'You are going to create epochs from events ' \
                                f'contained in your fif file.'
         warnings.warn(user_warning_message)
@@ -55,7 +55,7 @@ def main():
         dict_json_product['brainlife'].append({'type': 'info', 'msg': user_warning_message})
 
     # Epoch data
-    epoched_data = make_epochs(raw, events)
+    epoched_data = make_epochs(raw, events_file)
 
     # Success message in product.json    
     dict_json_product['brainlife'].append({'type': 'success', 'msg': 'Data was successfully epoched.'})
