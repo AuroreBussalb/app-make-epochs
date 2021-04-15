@@ -9,7 +9,7 @@ import os
 def make_epochs(raw, events):
 
     if events is not None:
-        # Convert tsv file into an numpy array of integers
+        # Convert tsv file into a numpy array of integers
         array_events = np.loadtxt(fname=events, delimiter="\t")
         events = array_events.astype(int)
 
