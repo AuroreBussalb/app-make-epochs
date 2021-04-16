@@ -1,4 +1,25 @@
 {
     "fif": "/network/lustre/iss01/home/aurore.bussalb/Repositories/test_snr/data/subject_1/bad_channels_1.fif",
-	"events": "/network/lustre/iss01/home/aurore.bussalb/Repositories/app-create-events/out_dir_create_events/events.tsv"
+	"calibration": "/network/lustre/iss01/home/aurore.bussalb/Repositories/data_test_BL/sss_cal.dat",
+    "crosstalk": "/network/lustre/iss01/home/aurore.bussalb/Repositories/data_test_BL/ct_sparse.fif",
+    "headshape": "",
+    "destination": "/network/lustre/iss01/home/aurore.bussalb/Repositories/data_test_BL/mean_tm-raw.fif",
+	"events": "/network/lustre/iss01/home/aurore.bussalb/Repositories/app-create-events/out_dir_create_events/events.tsv",
+	"param_event_id": null, 
+	"param_tmin":-0.2, 
+	"param_tmax":, 0.5
+	"param_baseline": (None, 0),
+	"param_picks": null, 
+	"param_preload": false,
+	"param_reject": null, 
+	"param_flat": null, 
+	"param_proj": true, 
+	"param_decim": 1,
+	"param_reject_tmin": null, 
+	"param_reject_tmax": null, 
+	"param_detrend": null,
+	"param_on_missing": "raise", 
+	"param_reject_by_annotation": true,
+	"param_metadata": null, 
+	"param_event_repeated": "error"
 }
