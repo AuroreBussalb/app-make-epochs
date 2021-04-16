@@ -170,22 +170,14 @@ def main():
     if config['param_metadata'] == "":
         config['param_metadata'] = None  # when App is run on Bl, no value for this parameter corresponds to ''
 
-    # Convert basline parameter into tuple
+    # Convert baseline parameter into tuple when the app runs locally
     if isinstance(config['param_baseline'], list):
        config['param_baseline'] = tuple(config['param_baseline'])
-        # Convert basline parameter into tuple
+    # Convert baseline parameter into tuple when the App runs on BL
     if isinstance(config['param_baseline'], str):
-       config['param_baseline'] = list(map(str, config['param_baseline'].split(', ')))
-       if config['param_baseline'][0] == 'None':
-           config['param_baseline'][0] = None
-       if config['param_baseline'][1] == 'None':
-           config['param_baseline'][1] = None
-       if isinstance(config['param_baseline'][0], str):
-           config['param_baseline'][0] = float(config['param_baseline'][0])
-       if isinstance(config['param_baseline'][1], str):
-           config['param_baseline'][1] = float(config['param_baseline'][1])
-       config['param_baseline'] = tuple(config['param_baseline'])
-
+        param_baseline = [None if i=='None' else i for i in config['param_baseline']]
+        param_baseline = [float(i) if isinstance(i, str) else i for i in param_baseline]
+        config['param_baseline'] = tuple(param_baseline)
 
     # Define kwargs
 
