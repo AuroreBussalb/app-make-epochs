@@ -170,11 +170,12 @@ def main():
     if config['param_metadata'] == "":
         config['param_metadata'] = None  # when App is run on Bl, no value for this parameter corresponds to ''
 
-    # Convert list parameter into tuple
-    print(type(config['param_baseline']))
+    # Convert basline parameter into tuple
     if isinstance(config['param_baseline'], list):
        config['param_baseline'] = tuple(config['param_baseline'])
-       print(config['param_baseline'])
+        # Convert basline parameter into tuple
+    if isinstance(config['param_baseline'], str):
+       config['param_baseline'] = tuple(config['param_baseline'])
 
     # Define kwargs
 
