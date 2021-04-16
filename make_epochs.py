@@ -182,7 +182,7 @@ def main():
            config['param_baseline'][1] = None
        if isinstance(config['param_baseline'][0], str):
            config['param_baseline'][0] = float(config['param_baseline'][0])
-       if isinstance(param_baseline[1], str):
+       if isinstance(config['param_baseline'][1], str):
            config['param_baseline'][1] = float(config['param_baseline'][1])
        config['param_baseline'] = tuple(config['param_baseline'])
 
