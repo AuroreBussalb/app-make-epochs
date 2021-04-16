@@ -175,7 +175,8 @@ def main():
        config['param_baseline'] = tuple(config['param_baseline'])
     # Convert baseline parameter into tuple when the App runs on BL
     if isinstance(config['param_baseline'], str):
-        param_baseline = [None if i=='None' else i for i in config['param_baseline']]
+    	param_baseline = list(map(str, config['param_baseline'].split(', ')))
+        param_baseline = [None if i=='None' else i for i in param_baseline]
         param_baseline = [float(i) if isinstance(i, str) else i for i in param_baseline]
         config['param_baseline'] = tuple(param_baseline)
 
