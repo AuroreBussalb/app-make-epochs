@@ -170,6 +170,10 @@ def main():
     if config['param_metadata'] == "":
         config['param_metadata'] = None  # when App is run on Bl, no value for this parameter corresponds to ''
 
+    # Convert list parameter into tuple
+    if isinstance(config['param_baseline'], list):
+       config['param_baseline'] = tuple(config['param_baseline'])
+
     # Define kwargs
 
     # Delete headshape key from config file
