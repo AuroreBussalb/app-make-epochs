@@ -173,7 +173,7 @@ def main():
     # Convert list parameter into tuple
     if isinstance(config['param_baseline'], list):
        config['param_baseline'] = tuple(config['param_baseline'])
-       print(config['param_baseline'])
+       print('aaa')
 
     # Define kwargs
 
