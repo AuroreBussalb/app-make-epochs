@@ -11,7 +11,7 @@ def make_epochs(raw, events_file, param_event_id, param_tmin, param_tmax, param_
                 param_picks, param_preload, param_reject, param_flat, param_proj, param_decim,
                 param_reject_tmin, param_reject_tmax, param_detrend, param_on_missing, param_reject_by_annotation,
                 param_metadata, param_event_repeated):
-	"""Creta epochs from matrix events contained in a .tsv file.
+	"""Create epochs from matrix events contained in a .tsv file.
 
     Parameters
     ----------
@@ -75,10 +75,10 @@ def make_epochs(raw, events_file, param_event_id, param_tmin, param_tmax, param_
 
     # Create epochs from events
     epoched_data = mne.Epochs(raw, events, event_id=param_event_id, tmin=param_tmin, tmax=param_tmax, baseline=param_baseline,
-	                          picks=param_picks, preload=param_preload, reject=param_reject, flat=param_flat, proj=param_proj, 
-	                          decim=param_decim, reject_tmin=param_reject_tmin, reject_tmax=param_reject_tmax, detrend=param_detrend, 
-	                          on_missing=param_on_missing, reject_by_annotation=param_reject_by_annotation,
-	                          metadata=param_metadata, event_repeated=param_event_repeated)
+                              picks=param_picks, preload=param_preload, reject=param_reject, flat=param_flat, proj=param_proj, 
+                              decim=param_decim, reject_tmin=param_reject_tmin, reject_tmax=param_reject_tmax, detrend=param_detrend, 
+                              on_missing=param_on_missing, reject_by_annotation=param_reject_by_annotation,
+                              metadata=param_metadata, event_repeated=param_event_repeated)
 
     # Save file
     epoched_data.save("out_dir_make_epochs/meg.fif", overwrite=True)
