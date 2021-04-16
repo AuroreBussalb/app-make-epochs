@@ -16,7 +16,7 @@ def make_epochs(raw, events_file, param_event_id, param_tmin, param_tmax, param_
     Parameters
     ----------
     raw: instance of mne.io.Raw
-        Data from which the events will be extracted or created.
+        Data to be epoched.
     events_file: str
         Path to the .tsv events file containing the matrix of events.
     param_event_id: int, list of int, or None
@@ -171,6 +171,7 @@ def main():
         config['param_metadata'] = None  # when App is run on Bl, no value for this parameter corresponds to ''
 
     # Convert list parameter into tuple
+    print(type(config['param_baseline']))
     if isinstance(config['param_baseline'], list):
        config['param_baseline'] = tuple(config['param_baseline'])
        print(config['param_baseline'])
