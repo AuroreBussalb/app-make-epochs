@@ -175,7 +175,7 @@ def main():
        config['param_baseline'] = tuple(config['param_baseline'])
         # Convert basline parameter into tuple
     if isinstance(config['param_baseline'], str):
-       config['param_baseline'] = tuple(config['param_baseline'])
+       config['param_baseline'] = tuple(map(int, config['param_baseline'].split(', ')))
 
     # Define kwargs
 
