@@ -68,7 +68,7 @@ def make_epochs(raw, events_file, param_event_id, param_tmin, param_tmax, param_
     epoched_data: instance of mne.Epochs
         The epoched data.
     """
-
+    
     # Convert tsv file into a numpy array of integers
     array_events = np.loadtxt(fname=events_file, delimiter="\t")
     events = array_events.astype(int)
