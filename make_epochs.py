@@ -11,7 +11,7 @@ def make_epochs(raw, events_file, param_event_id, param_tmin, param_tmax, param_
                 param_picks, param_preload, param_reject, param_flat, param_proj, param_decim,
                 param_reject_tmin, param_reject_tmax, param_detrend, param_on_missing, param_reject_by_annotation,
                 param_metadata, param_event_repeated):
-	"""Create epochs from matrix events contained in a .tsv file.
+    """Create epochs from matrix events contained in a .tsv file.
 
     Parameters
     ----------
@@ -70,8 +70,6 @@ def make_epochs(raw, events_file, param_event_id, param_tmin, param_tmax, param_
     """
     
     # Convert tsv file into a numpy array of integers
-    print('aaaaa')
-    print('zzzz')
     array_events = np.loadtxt(fname=events_file, delimiter="\t")
     events = array_events.astype(int)
 
