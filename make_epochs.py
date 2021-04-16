@@ -175,7 +175,17 @@ def main():
        config['param_baseline'] = tuple(config['param_baseline'])
         # Convert basline parameter into tuple
     if isinstance(config['param_baseline'], str):
-       config['param_baseline'] = tuple(map(int, config['param_baseline'].split(', ')))
+       config['param_baseline'] = list(map(str, config['param_baseline'].split(', ')))
+        if config['param_baseline'][0] == 'None':
+            config['param_baseline'][0] = None
+        if config['param_baseline'][1] == 'None':
+            config['param_baseline'][1] = None
+        if isinstance(config['param_baseline'][0], str):
+            config['param_baseline'][0] = float(config['param_baseline'][0])
+        if isinstance(param_baseline[1], str):
+            config['param_baseline'][1] = float(config['param_baseline'][1])
+        config['param_baseline'] = tuple(config['param_baseline'])
+
 
     # Define kwargs
 
