@@ -8,16 +8,17 @@ import shutil
 import os 
 
 def make_epochs(raw, events_file, param_event_id, param_tmin, param_tmax, param_baseline,
-                param_picks, param_preload, param_reject, param_flat, param_proj, param_decim,
-                param_reject_tmin, param_reject_tmax, param_detrend, param_on_missing, param_reject_by_annotation,
-                param_metadata, param_event_repeated):
+                param_picks_by_channel_types_or_names, param_picks_by_channel_indices, 
+                param_preload, param_reject, param_flat, param_proj, param_decim,
+                param_reject_tmin, param_reject_tmax, param_detrend, param_on_missing, 
+                param_reject_by_annotation, param_metadata, param_event_repeated):
     """Create epochs from matrix events contained in a .tsv file.
 
     Parameters
     ----------
     raw: instance of mne.io.Raw
         Data from which the events will be extracted or created.
-    events_file: str
+    events_file: str 
         Path to the .tsv events file containing the matrix of events.
     param_event_id: int, list of int, or None
         The id of the event to consider. Default is None.
@@ -28,8 +29,16 @@ def make_epochs(raw, events_file, param_event_id, param_tmin, param_tmax, param_
     param_baseline: tuple of length 2 or None
         The time interval to consider as “baseline” when applying baseline correction. 
         Default is (None, 0).
-    param_picks: str, list, slice, or None
-        Channels to include. Default is None.
+    param_picks_by_channel_types_or_names: str, list of str, or None 
+        Channels to include. In lists, channel type strings (e.g., ["meg", "eeg"]) will pick channels of those types, channel name 
+        strings (e.g., ["MEG0111", "MEG2623"]) will pick the given channels. Can also be the string values “all” 
+        to pick all channels, or “data” to pick data channels. None (default) will pick all data channels. Note 
+        that channels in info['bads'] will be included if their names are explicitly provided.
+    param_picks_by_channel_indices: list of int, slice, or None
+        Channels to include. Slices (e.g., "0, 10, 2" or "0, 10" if you don't want a step) and lists of integers 
+        are interpreted as channel indices. None (default) will pick all data channels. This parameter must be set 
+        to None if param_picks_by_channel_types_or_names is not None. Note that channels in info['bads'] will 
+        be included if their indices are explicitly provided.
     param_preload: bool
         Load all epochs from disk when creating the object or wait before accessing each epoch.
         Default is False.
@@ -68,6 +77,21 @@ def make_epochs(raw, events_file, param_event_id, param_tmin, param_tmax, param_
     epoched_data: instance of mne.Epochs
         The epoched data.
     """
+
+    # Raise error if both param picks are not None
+    if param_picks_by_channel_types_or_names is not None and param_picks_by_channel_indices is not None:
+        value_error_message = f"You can't provide values for both " \
+                              f"param_picks_by_channel_types_or_names and " \
+                              f"param_picks_by_channel_indices. One of them must be " \
+                              f"set to None."
+        raise ValueError(value_error_message)
+    # Define param_picks
+    elif param_picks_by_channel_types_or_names is None and param_picks_by_channel_indices is not None:
+        param_picks = param_picks_by_channel_indices
+    elif param_picks_by_channel_types_or_names is not None and param_picks_by_channel_indices is None:
+        param_picks = param_picks_by_channel_types_or_names
+    else:
+        param_picks = None  
     
     # Convert tsv file into a numpy array of integers
     array_events = np.loadtxt(fname=events_file, delimiter="\t")
@@ -132,50 +156,94 @@ def main():
     if os.path.exists(head_pos) is True:
         shutil.copy2(head_pos, 'out_dir_make_epochs/headshape.pos')  # required to run a pipeline on BL
 
-    # Check for None parameters
+    # Convert all "" into None when the App runs on BL
+    tmp = dict((k, None) for k, v in config.items() if v == "")
+    config.update(tmp)
 
-    # event id
-    if config['param_event_id'] == "":
-        config['param_event_id'] = None  # when App is run on Bl, no value for this parameter corresponds to ''
+    # # event id
+    # if config['param_event_id'] == "":
+    #     config['param_event_id'] = None  # when App is run on Bl, no value for this parameter corresponds to ''
 
-    # Baseline
-    if config['param_baseline'] == "":
-        config['param_baseline'] = None  # when App is run on Bl, no value for this parameter corresponds to ''
+    # # Baseline
+    # if config['param_baseline'] == "":
+    #     config['param_baseline'] = None  # when App is run on Bl, no value for this parameter corresponds to ''
 
-    # picks
-    if config['param_picks'] == "":
-        config['param_picks'] = None  # when App is run on Bl, no value for this parameter corresponds to ''    
+    # # picks
+    # if config['param_picks'] == "":
+    #     config['param_picks'] = None  # when App is run on Bl, no value for this parameter corresponds to ''    
 
-    # reject
-    if config['param_reject'] == "":
-        config['param_reject'] = None  # when App is run on Bl, no value for this parameter corresponds to '' 
+    # # reject
+    # if config['param_reject'] == "":
+    #     config['param_reject'] = None  # when App is run on Bl, no value for this parameter corresponds to '' 
 
-    # flat
-    if config['param_flat'] == "":
-        config['param_flat'] = None  # when App is run on Bl, no value for this parameter corresponds to '' 
+    # # flat
+    # if config['param_flat'] == "":
+    #     config['param_flat'] = None  # when App is run on Bl, no value for this parameter corresponds to '' 
 
-    # reject tmin
-    if config['param_reject_tmin'] == "":
-        config['param_reject_tmin'] = None  # when App is run on Bl, no value for this parameter corresponds to '' 
+    # # reject tmin
+    # if config['param_reject_tmin'] == "":
+    #     config['param_reject_tmin'] = None  # when App is run on Bl, no value for this parameter corresponds to '' 
 
-    # reject tmax
-    if config['param_reject_tmax'] == "":
-        config['param_reject_tmax'] = None  # when App is run on Bl, no value for this parameter corresponds to ''
+    # # reject tmax
+    # if config['param_reject_tmax'] == "":
+    #     config['param_reject_tmax'] = None  # when App is run on Bl, no value for this parameter corresponds to ''
 
-    # reject detrend
-    if config['param_detrend'] == "":
-        config['param_param_detrend'] = None  # when App is run on Bl, no value for this parameter corresponds to ''
+    # # reject detrend
+    # if config['param_detrend'] == "":
+    #     config['param_param_detrend'] = None  # when App is run on Bl, no value for this parameter corresponds to ''
 
-    # reject metadata
-    if config['param_metadata'] == "":
-        config['param_metadata'] = None  # when App is run on Bl, no value for this parameter corresponds to ''
+    # # reject metadata
+    # if config['param_metadata'] == "":
+    #     config['param_metadata'] = None  # when App is run on Bl, no value for this parameter corresponds to ''
 
-    # Convert list parameter into tuple
-    if isinstance(config['param_baseline'], list):
+    ## Convert parameters ## 
+
+    # Deal with param baseline #
+    # Convert baseline parameter into tuple when the App is run locally
+    if config['param_baseline'] is not None:
        config['param_baseline'] = tuple(config['param_baseline'])
-       print(config['param_baseline'])
 
-    # Define kwargs
+    # Deal with param_picks_by_channel_indices parameter #
+    # Convert it into a slice When the App is run locally and on BL
+    picks = config['param_picks_by_channel_indices']
+    if isinstance(picks, str) and picks.find(",") != -1 and picks.find("[") == -1 and picks is not None:
+        picks = list(map(int, picks.split(', ')))
+        if len(picks) == 2:
+            config['param_picks_by_channel_indices'] = slice(picks[0], picks[1])
+        elif len(picks) == 3:
+            config['param_picks_by_channel_indices'] = slice(picks[0], picks[1], picks[2])
+        else:
+            value_error_message = f"If you want to select channels using a slice, you must give two or three elements."
+            raise ValueError(value_error_message)
+
+    # Convert it into a list of integers when the App is run on BL
+    if isinstance(picks, str) and picks.find(",") != -1 and picks.find("[") != -1 and picks is not None:
+        picks = picks.replace('[', '')
+        picks = picks.replace(']', '')
+        config['param_picks_by_channel_indices'] = list(map(int, picks.split(', ')))
+
+    # Deal with param_picks_by_channel_types_or_name parameter #
+    # Convert it into a list of str when the App is run on BL
+    picks = config['param_picks_by_channel_types_or_names']
+    if isinstance(picks, str) and picks.find("[") != -1 and picks is not None:
+        picks = picks.replace('[', '')
+        picks = picks.replace(']', '')
+        config['param_picks_by_channel_types_or_names'] = list(map(str, picks.split(', ')))
+
+    # Deal with event id #    
+    # Convert it into a list of int or an int When it is run on BL
+    if config['param_event_id'] is not None:
+        if config['param_event_id']find("[") != -1: 
+            config['param_event_id'] = config['param_event_id'].replace('[', '')
+            config['param_event_id'] = config['param_event_id'].replace(']', '')
+            config['param_event_id'] = list(map(int, config['param_event_id'].split(', ')))  
+        else:
+            config['param_event_id'] = int(config['param_event_id']) 
+
+    # Deal with param proj
+    
+
+    ## Define kwargs ##
 
     # Delete keys values in config.json when this app is executed on Brainlife
     if '_app' and '_tid' and '_inputs' and '_outputs' in config.keys():
