@@ -198,13 +198,7 @@ def main():
 
     ## Convert parameters ## 
 
-    # Deal with param baseline #
-    # Convert baseline parameter into tuple when the App is run locally
-    if config['param_baseline'] is not None:
-       config['param_baseline'] = tuple(config['param_baseline'])
-
-    # Deal with param_baseline parameter
-
+    # Deal with param_baseline parameter # 
     # Convert baseline parameter into tuple when the app runs locally
     if isinstance(config['param_baseline'], list):
        config['param_baseline'] = tuple(config['param_baseline'])
