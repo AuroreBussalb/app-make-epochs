@@ -252,7 +252,7 @@ def main():
     # Deal with event id #    
     # Convert it into a list of int or an int When it is run on BL
     if config['param_event_id'] is not None:
-        if config['param_event_id']find("[") != -1: 
+        if config['param_event_id'].find("[") != -1: 
             config['param_event_id'] = config['param_event_id'].replace('[', '')
             config['param_event_id'] = config['param_event_id'].replace(']', '')
             config['param_event_id'] = list(map(int, config['param_event_id'].split(', ')))  
