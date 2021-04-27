@@ -123,6 +123,9 @@ def main():
     data_file = config.pop('fif')
     raw = mne.io.read_raw_fif(data_file, allow_maxshield=True)
 
+    
+    ## Read the optional files ##
+
     # Read the events file
     events_file = config.pop('events')
 
@@ -156,9 +159,11 @@ def main():
     if os.path.exists(head_pos) is True:
         shutil.copy2(head_pos, 'out_dir_make_epochs/headshape.pos')  # required to run a pipeline on BL
 
+    
     # Convert all "" into None when the App runs on BL
     tmp = dict((k, None) for k, v in config.items() if v == "")
     config.update(tmp)
+
 
     ## Convert parameters ## 
 
@@ -218,12 +223,14 @@ def main():
         else:
             config['param_event_id'] = int(config['param_event_id']) 
 
+    
     ## Define kwargs ##
 
     # Delete keys values in config.json when this app is executed on Brainlife
     if '_app' and '_tid' and '_inputs' and '_outputs' in config.keys():
         del config['_app'], config['_tid'], config['_inputs'], config['_outputs'] 
     kwargs = config  
+    
 
     # Epoch data
     epoched_data = make_epochs(raw, events_file, **kwargs)
