@@ -214,6 +214,7 @@ def main():
         param_baseline = list(map(str, config['param_baseline'].split(', ')))
         param_baseline = [None if i=='None' else i for i in param_baseline]
         param_baseline = [float(i) if isinstance(i, str) else i for i in param_baseline]
+        print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
         config['param_baseline'] = tuple(param_baseline)
 
     # Deal with param_proj parameter when app runs on BL
