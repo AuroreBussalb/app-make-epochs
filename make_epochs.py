@@ -160,42 +160,6 @@ def main():
     tmp = dict((k, None) for k, v in config.items() if v == "")
     config.update(tmp)
 
-    # # event id
-    # if config['param_event_id'] == "":
-    #     config['param_event_id'] = None  # when App is run on Bl, no value for this parameter corresponds to ''
-
-    # # Baseline
-    # if config['param_baseline'] == "":
-    #     config['param_baseline'] = None  # when App is run on Bl, no value for this parameter corresponds to ''
-
-    # # picks
-    # if config['param_picks'] == "":
-    #     config['param_picks'] = None  # when App is run on Bl, no value for this parameter corresponds to ''    
-
-    # # reject
-    # if config['param_reject'] == "":
-    #     config['param_reject'] = None  # when App is run on Bl, no value for this parameter corresponds to '' 
-
-    # # flat
-    # if config['param_flat'] == "":
-    #     config['param_flat'] = None  # when App is run on Bl, no value for this parameter corresponds to '' 
-
-    # # reject tmin
-    # if config['param_reject_tmin'] == "":
-    #     config['param_reject_tmin'] = None  # when App is run on Bl, no value for this parameter corresponds to '' 
-
-    # # reject tmax
-    # if config['param_reject_tmax'] == "":
-    #     config['param_reject_tmax'] = None  # when App is run on Bl, no value for this parameter corresponds to ''
-
-    # # reject detrend
-    # if config['param_detrend'] == "":
-    #     config['param_param_detrend'] = None  # when App is run on Bl, no value for this parameter corresponds to ''
-
-    # # reject metadata
-    # if config['param_metadata'] == "":
-    #     config['param_metadata'] = None  # when App is run on Bl, no value for this parameter corresponds to ''
-
     ## Convert parameters ## 
 
     # Deal with param_baseline parameter # 
@@ -208,14 +172,14 @@ def main():
         param_baseline = list(map(str, config['param_baseline'].split(', ')))
         param_baseline = [None if i=='None' else i for i in param_baseline]
         param_baseline = [float(i) if isinstance(i, str) else i for i in param_baseline]
-        print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
         config['param_baseline'] = tuple(param_baseline)
 
-    # Deal with param_proj parameter when app runs on BL
-    # if config['param_proj'] == "True":
-    #     config['param_proj'] = True
-    # elif config['param_proj'] == "False":
-    #     config['param_proj'] = False
+    # Deal with param_proj parameter #
+    # Convert string into boolean when app runs on BL
+    if config['param_proj'] == "True":
+        config['param_proj'] = True
+    elif config['param_proj'] == "False":
+        config['param_proj'] = False
 
     # Deal with param_picks_by_channel_indices parameter #
     # Convert it into a slice When the App is run locally and on BL
@@ -253,9 +217,6 @@ def main():
             config['param_event_id'] = list(map(int, config['param_event_id'].split(', ')))  
         else:
             config['param_event_id'] = int(config['param_event_id']) 
-
-    # Deal with param proj
-    
 
     ## Define kwargs ##
 
