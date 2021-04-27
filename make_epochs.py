@@ -18,7 +18,7 @@ def make_epochs(raw, events_file, param_event_id, param_tmin, param_tmax, param_
     ----------
     raw: instance of mne.io.Raw
         Data from which the events will be extracted or created.
-    events_file: str 
+    events_file: str
         Path to the .tsv events file containing the matrix of events.
     param_event_id: int, list of int, or None
         The id of the event to consider. Default is None.
@@ -202,6 +202,25 @@ def main():
     # Convert baseline parameter into tuple when the App is run locally
     if config['param_baseline'] is not None:
        config['param_baseline'] = tuple(config['param_baseline'])
+
+    # Deal with param_baseline parameter
+
+    # Convert baseline parameter into tuple when the app runs locally
+    if isinstance(config['param_baseline'], list):
+       config['param_baseline'] = tuple(config['param_baseline'])
+
+    # Convert baseline parameter into tuple when the App runs on BL
+    if isinstance(config['param_baseline'], str):
+        param_baseline = list(map(str, config['param_baseline'].split(', ')))
+        param_baseline = [None if i=='None' else i for i in param_baseline]
+        param_baseline = [float(i) if isinstance(i, str) else i for i in param_baseline]
+        config['param_baseline'] = tuple(param_baseline)
+
+    # Deal with param_proj parameter when app runs on BL
+    # if config['param_proj'] == "True":
+    #     config['param_proj'] = True
+    # elif config['param_proj'] == "False":
+    #     config['param_proj'] = False
 
     # Deal with param_picks_by_channel_indices parameter #
     # Convert it into a slice When the App is run locally and on BL
