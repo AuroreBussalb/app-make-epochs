@@ -22,22 +22,20 @@ This is a draft of a future Brainlife App using MNE Python to epoch the data ([`
     * `param_reject`: `dict`, optional, reject epochs based on peak-to-peak signal amplitude, i.e. the absolute difference between the lowest and the highest signal value. 
        Default is None.
     * `param_flat`: `dict`, optional, rejection parameters based on flatness of signal. Valid keys are 'grad', 'mag', 'eeg', 'eog', 'ecg'. 
-        The values are floats that set the minimum acceptable peak-to-peak amplitude. Default is None.
+The values are floats that set the minimum acceptable peak-to-peak amplitude. Default is None.
     * `param_proj`: `bool` or `str`, apply SSP projection vectors. If proj is "delayed" and reject is not None the single epochs will be 
-        projected before the rejection decision, but used in unprojected state if they are kept. Default is True.
+projected before the rejection decision, but used in unprojected state if they are kept. Default is True.
     * `param_decim`: `int`, factor by which to subsample the data. Default is 1.
     * `param_reject_tmin`: `scalar`, optional, start of the time window used to reject epochs (with the default None, the window will start with tmin).
-    * `param_reject_tmax`: `scalar` or None, end of the time window used to reject epochs (with the default None, the window will end with tmax).  
+    * `param_reject_tmax`: `scalar` or None, end of the time window used to reject epochs (with the default None, the window will end with tmax). 
     * `param_detrend`: `int`, optional, if 0 or 1, the data channels (MEG and EEG) will be detrended when loaded. 0 is a constant (DC) detrend, 1 
         is a linear detrend. Default is None (no detrending).
     * `param_on_missing`: `str`, what to do if one or several event ids are not found in the recording. Valid keys are 'raise', 'warn', or
-        'ignore'. Default is 'raise'.
-    * `param_reject_by_annotation`: `bool`, whether to reject based on annotations. If True, epochs overlapping with segments whose description 
-        begins with 'bad' are rejected. Default is True.
-    * `param_metadata`: instance of `pandas.DataFrame` or None
-        A pandas.DataFrame specifying metadata about each epoch. Default is None.
+'ignore'. Default is 'raise'.
+    * `param_reject_by_annotation`: `bool`, whether to reject based on annotations. If True, epochs overlapping with segments whose description begins with 'bad' are rejected. Default is True.
+    * `param_metadata`: `str`, `dict` or None, path to a csv file specifying metadata about each epoch. Default is None.
     * `param_event_repeated`: `str`, how to handle duplicates in events[:, 0]. Can be 'error', to raise an error, ‘drop’ to only retain 
-        the row occurring first in the events, or 'merge' to combine the coinciding events (=duplicates) into a new event. Default is 'error'.
+the row occurring first in the events, or 'merge' to combine the coinciding events (=duplicates) into a new event. Default is 'error'.
       
 This list along with the default values correspond to the parameters of MNE Python version 0.22.0.
 

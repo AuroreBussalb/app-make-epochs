@@ -6,6 +6,7 @@ import numpy as np
 import warnings
 import shutil
 import os 
+import pandas as pd
 
 def make_epochs(raw, events_file, param_event_id, param_tmin, param_tmax, param_baseline,
                 param_picks_by_channel_types_or_names, param_picks_by_channel_indices, 
@@ -223,14 +224,26 @@ def main():
         else:
             config['param_event_id'] = int(config['param_event_id']) 
 
-    
+    # Deal with param metadata #
+    # Convert it into a pd.Dataframe when the App runs locally
+    if isinstance(config['param_metadata'], str):
+        config['param_metadata'] = pd.read_csv(config['param_metadata'])
+    elif isinstance(config['param_metadata'], dict):
+        config['param_metadata'] = pd.DataFrame(list(config['param_metadata'].items())) 
+
+    # Deal with param detrend #
+    # Convert it into an int if not None
+    if isinstance(config['param_detrend'], str):
+        config['param_detrend'] = int(config['param_detrend'])
+
+
     ## Define kwargs ##
 
     # Delete keys values in config.json when this app is executed on Brainlife
     if '_app' and '_tid' and '_inputs' and '_outputs' in config.keys():
         del config['_app'], config['_tid'], config['_inputs'], config['_outputs'] 
     kwargs = config  
-    
+
 
     # Epoch data
     epoched_data = make_epochs(raw, events_file, **kwargs)
