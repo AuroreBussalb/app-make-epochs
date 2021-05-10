@@ -130,7 +130,7 @@ def main():
     # Read the events file
     events_file = config.pop('events')
 
-    # Test if events file exist
+    # Test if events file exists
     if events_file is not None:
         if os.path.exists(events_file) is False:
             events_file = None
@@ -140,6 +140,10 @@ def main():
             raise ValueError(value_error_message)
         else:
     	    shutil.copy2(events_file, 'out_dir_make_epochs/events.tsv')  # required to run a pipeline on BL
+    else:
+        value_error_message = f'You need to provide events.tsv to make epochs.' 
+        # Raise exception
+        raise ValueError(value_error_message)
 
     # Read the crosstalk file
     cross_talk_file = config.pop('crosstalk')
