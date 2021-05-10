@@ -131,34 +131,45 @@ def main():
     events_file = config.pop('events')
 
     # Test if events file exist
-    if os.path.exists(events_file) is False:
-        events_file = None
-        value_error_message = f'You need to provide events.tsv to make epochs. ' \
-                              f'Please use the app-get-events to create such file.'
-        # Raise exception
-        raise ValueError(value_error_message)
-    else:
-    	shutil.copy2(events_file, 'out_dir_make_epochs/events.tsv')  # required to run a pipeline on BL
+    if events_file is not None:
+        if os.path.exists(events_file) is False:
+            events_file = None
+            value_error_message = f'You need to provide events.tsv to make epochs. ' \
+                                  f'Please use the app-get-events to create such file.'
+            # Raise exception
+            raise ValueError(value_error_message)
+        else:
+    	    shutil.copy2(events_file, 'out_dir_make_epochs/events.tsv')  # required to run a pipeline on BL
 
     # Read the crosstalk file
     cross_talk_file = config.pop('crosstalk')
-    if os.path.exists(cross_talk_file) is True:
-        shutil.copy2(cross_talk_file, 'out_dir_make_epochs/crosstalk_meg.fif')  # required to run a pipeline on BL
+    if cross_talk_file is not None:
+        if os.path.exists(cross_talk_file) is True:
+            shutil.copy2(cross_talk_file, 'out_dir_make_epochs/crosstalk_meg.fif')  # required to run a pipeline on BL
 
     # Read the calibration file
     calibration_file = config.pop('calibration')
-    if os.path.exists(calibration_file) is True:
-        shutil.copy2(calibration_file, 'out_dir_make_epochs/calibration_meg.dat')  # required to run a pipeline on BL
+    if calibration_file is not None: 
+        if os.path.exists(calibration_file) is True:
+            shutil.copy2(calibration_file, 'out_dir_make_epochs/calibration_meg.dat')  # required to run a pipeline on BL
 
     # Read destination file 
     destination_file = config.pop('destination')
-    if os.path.exists(destination_file) is True:
-        shutil.copy2(destination_file, 'out_dir_make_epochs/destination.fif')  # required to run a pipeline on BL
+    if destination_file is not None:
+        if os.path.exists(destination_file) is True:
+            shutil.copy2(destination_file, 'out_dir_make_epochs/destination.fif')  # required to run a pipeline on BL
 
     # Read head pos file
     head_pos = config.pop('headshape')
-    if os.path.exists(head_pos) is True:
-        shutil.copy2(head_pos, 'out_dir_make_epochs/headshape.pos')  # required to run a pipeline on BL
+    if head_pos is not None:
+        if os.path.exists(head_pos) is True:
+            shutil.copy2(head_pos, 'out_dir_make_epochs/headshape.pos')  # required to run a pipeline on BL
+
+    # Read channels file 
+    channels_file = config.pop('channels')
+    if channels_file is not None:
+        if os.path.exists(channels_file):
+            shutil.copy2(channels_file, 'out_dir_make_epochs/channels.tsv')  # required to run a pipeline on BL
 
     
     # Convert all "" into None when the App runs on BL
