@@ -21,7 +21,7 @@ def make_epochs(raw, events_matrix, param_event_id, param_tmin, param_tmax, para
     raw: instance of mne.io.Raw
         Data from which the events will be extracted or created.
     events_matrix: np.array
-        Matrix of events.
+        Matrix of events (2D array, shape (n_events, 3)).
     param_event_id: int, list of int, or None
         The id of the event to consider. Default is None.
     param_tmin: float
@@ -190,6 +190,21 @@ def main():
     if channels_file is not None:
         if os.path.exists(channels_file):
             shutil.copy2(channels_file, 'out_dir_make_epochs/channels.tsv')  # required to run a pipeline on BL
+            df_channels = pd.read_csv(channels_file, sep='\t')
+            # Select bad channels' name
+            bad_channels = df_channels[df_channels["status"] == "bad"]['name']
+            bad_channels = list(bad_channels.values)
+            # Put channels.tsv bad channels in raw.info['bads']
+            raw.info['bads'].sort() 
+            bad_channels.sort()
+            # Warning message
+            if raw.info['bads'] != bad_channels:
+                user_warning_message_channels = f'Bad channels from the info of your data file are different from ' \
+                                                f'those in the channels.tsv file. By default, only bad channels from channels.tsv ' \
+                                                f'are considered as bad: the info of your data file is updated with those channels.'
+                warnings.warn(user_warning_message_channels)
+                dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message_channels})
+                raw.info['bads'] = bad_channels
 
     
     # Convert all "" into None when the App runs on BL
