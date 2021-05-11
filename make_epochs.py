@@ -8,7 +8,8 @@ import shutil
 import os 
 import pandas as pd
 
-def make_epochs(raw, events_file, param_event_id, param_tmin, param_tmax, param_baseline,
+
+def make_epochs(raw, events_matrix, param_event_id, param_tmin, param_tmax, param_baseline,
                 param_picks_by_channel_types_or_names, param_picks_by_channel_indices, 
                 param_preload, param_reject, param_flat, param_proj, param_decim,
                 param_reject_tmin, param_reject_tmax, param_detrend, param_on_missing, 
@@ -19,8 +20,8 @@ def make_epochs(raw, events_file, param_event_id, param_tmin, param_tmax, param_
     ----------
     raw: instance of mne.io.Raw
         Data from which the events will be extracted or created.
-    events_file: str
-        Path to the .tsv events file containing the matrix of events.
+    events_matrix: np.array
+        Matrix of events.
     param_event_id: int, list of int, or None
         The id of the event to consider. Default is None.
     param_tmin: float
@@ -93,13 +94,9 @@ def make_epochs(raw, events_file, param_event_id, param_tmin, param_tmax, param_
         param_picks = param_picks_by_channel_types_or_names
     else:
         param_picks = None  
-    
-    # Convert tsv file into a numpy array of integers
-    array_events = np.loadtxt(fname=events_file, delimiter="\t")
-    events = array_events.astype(int)
 
     # Create epochs from events
-    epoched_data = mne.Epochs(raw, events, event_id=param_event_id, tmin=param_tmin, tmax=param_tmax, baseline=param_baseline,
+    epoched_data = mne.Epochs(raw, events_matrix, event_id=param_event_id, tmin=param_tmin, tmax=param_tmax, baseline=param_baseline,
                               picks=param_picks, preload=param_preload, reject=param_reject, flat=param_flat, proj=param_proj, 
                               decim=param_decim, reject_tmin=param_reject_tmin, reject_tmax=param_reject_tmax, detrend=param_detrend, 
                               on_missing=param_on_missing, reject_by_annotation=param_reject_by_annotation,
@@ -139,7 +136,26 @@ def main():
             # Raise exception
             raise ValueError(value_error_message)
         else:
-    	    shutil.copy2(events_file, 'out_dir_make_epochs/events.tsv')  # required to run a pipeline on BL
+            shutil.copy2(events_file, 'out_dir_make_epochs/events.tsv')  # required to run a pipeline on BL
+            ############### TO BE TESTED ON NO RESTING STATE DATA
+            # Compute the events matrix #
+            df_events = pd.read_csv(events_file, sep='\t')
+            
+            # Extract relevant info from df_events
+            samples = df_events['sample'].values
+            event_id = df_events['value'].values
+
+            # Compute the values for events matrix 
+            events_time_in_sample = [raw.first_samp + sample for sample in samples]
+            values_of_trigger_channels = [0]*len(events_time_in_sample)
+
+            # Create a dataframe
+            df_events_matrix = pd.DataFrame([events_time_in_sample, values_of_trigger_channels, event_id])
+            df_events_matrix = df_events_matrix.transpose()
+
+            # Convert dataframe to numpy array
+            events_matrix = df_events_matrix.to_numpy()
+
     else:
         value_error_message = f'You need to provide events.tsv to make epochs.' 
         # Raise exception
@@ -261,7 +277,7 @@ def main():
 
 
     # Epoch data
-    epoched_data = make_epochs(raw, events_file, **kwargs)
+    epoched_data = make_epochs(raw, events_matrix, **kwargs)
 
     # Success message in product.json    
     dict_json_product['brainlife'].append({'type': 'success', 'msg': 'Data was successfully epoched.'})
