@@ -173,8 +173,6 @@ def main():
     if events_file is not None:
         if os.path.exists(events_file) is False:
             events_file = None
-            # Raise exception
-            raise ValueError(value_error_message)
         else:
             events_file_exists = True
             # Warning: events file must be BIDS compliant  
