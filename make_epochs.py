@@ -222,7 +222,7 @@ def main():
         events_file = config.pop('events_override')
         # Test if events file exists
         if os.path.exists(events_file) is False:
-            events_file_override = None
+            events_file = None
         else:
             if events_file_exists:
                 user_warning_message_events_file = f"You provided two events files: by default, the file written by " \
