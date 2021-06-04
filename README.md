@@ -12,6 +12,7 @@ This is a draft of a future Brainlife App using MNE Python to epoch the data ([`
     * an optional crosstalk compensation file in `.fif`,
     * an optional head position file in `.pos`,
     * an optional destination file in `.fif`,
+    * an optional channels file in `.tsv`.
 3) Input parameters are:
     * `param_event_id`: `int`, `list of int`, optional, the id of the event to consider. Default is None.
     * `param_tmin`: `float`, start time before event. Default is -0.2.

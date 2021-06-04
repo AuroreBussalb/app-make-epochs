@@ -7,6 +7,7 @@ import warnings
 import shutil
 import os 
 import pandas as pd
+import helper
 
 
 def make_epochs(raw, events_matrix, param_event_id, param_tmin, param_tmax, param_baseline,
@@ -121,129 +122,40 @@ def main():
     data_file = config.pop('fif')
     raw = mne.io.read_raw_fif(data_file, allow_maxshield=True)
 
+    # Read and save optional files
+    config, cross_talk_file, calibration_file, events_file, head_pos_file, channels_file, destination = helper.read_optional_files(config, 'out_dir_make_epochs')
     
-    ## Read the optional files ##
+    # Convert empty strings values to None
+    config = helper.convert_parameters_to_None(config)
 
-    # From meg/fif datatype #
-
-    # Read the crosstalk file
-    cross_talk_file = config.pop('crosstalk')
-
-    # Read the calibration file
-    calibration_file = config.pop('calibration')
-
-    # Read destination file 
-    destination_file = config.pop('destination')
-
-    # Read head pos file
-    head_pos = config.pop('headshape')
-    if head_pos is not None:
-        if os.path.exists(head_pos) is True:
-            shutil.copy2(head_pos, 'out_dir_make_epochs/headshape.pos')  # required to run a pipeline on BL
-
-    # Read channels file 
-    channels_file = config.pop('channels')
-    channels_file_exists = False
+    # Channels.tsv must be BIDS compliant
     if channels_file is not None:
-        if os.path.exists(channels_file):
-            channels_file_exists = True
-            shutil.copy2(channels_file, 'out_dir_make_epochs/channels.tsv')  # required to run a pipeline on BL
-            df_channels = pd.read_csv(channels_file, sep='\t')
-            # Select bad channels' name
-            bad_channels = df_channels[df_channels["status"] == "bad"]['name']
-            bad_channels = list(bad_channels.values)
-            # Put channels.tsv bad channels in raw.info['bads']
-            raw.info['bads'].sort() 
-            bad_channels.sort()
-            # Warning message
-            if raw.info['bads'] != bad_channels:
-                user_warning_message_channels = f'Bad channels from the info of your data file are different from ' \
-                                                f'those in the channels.tsv file. By default, only bad channels from channels.tsv ' \
-                                                f'are considered as bad: the info of your data file is updated with those channels.'
-                warnings.warn(user_warning_message_channels)
-                dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message_channels})
-                raw.info['bads'] = bad_channels
+        user_warning_message_channels = f'The channels file provided must be ' \
+                                        f'BIDS compliant and the column "status" must be present. ' 
+        warnings.warn(user_warning_message_channels)
+        dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message_channels})
 
-
-    # Read the events file
-    events_file = config.pop('events')
-    events_file_exists = False
-
-    # Test if events file exists
-    if events_file is not None:
-        if os.path.exists(events_file) is False:
-            events_file = None
-        else:
-            events_file_exists = True
-            # Warning: events file must be BIDS compliant  
-            user_warning_message_events = f'The events file provided must be ' \
-                                          f'BIDS compliant and the column "status" must be present.'        
-            warnings.warn(user_warning_message_events)
-            dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message_events})
-            # Save events file
-            shutil.copy2(events_file, 'out_dir_make_epochs/events.tsv')  # required to run a pipeline on BL
-
-
-    # From the meg/fif-override datatype #
-
-    # Read channels file
-    if 'channels_override' in config.keys():
-        channels_file_override = config.pop('channels_override')
-        # No need to test if channels_override is None, this key is only present when the app runs on BL    
-        if os.path.exists(channels_file_override) is False:
-            channels_file_override = None
-        else:
-            if channels_file_exists:
-                user_warning_message_channels_file = f"You provided two channels files: by default, the file written by " \
-                                                     f"the App detecting bad channels will be used."
-                warnings.warn(user_warning_message_channels_file)
-                dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message_channels_file}) 
-        shutil.copy2(channels_file_override, 'out_dir_make_epochs/channels.tsv')  # required to run a pipeline on BL        
-        df_channels = pd.read_csv(channels_file_override, sep='\t')
-        # Select bad channels' name
-        bad_channels_override = df_channels[df_channels["status"] == "bad"]['name']
-        bad_channels_override = list(bad_channels_override.values)
-        # Put channels.tsv bad channels in raw.info['bads']
-        raw.info['bads'].sort() 
-        bad_channels_override.sort()
-        # Warning message
-        if raw.info['bads'] != bad_channels_override:
-            user_warning_message_channels_override = f'Bad channels from the info of your MEG file are different from ' \
-                                                     f'those in the channels.tsv file. By default, only bad channels from channels.tsv ' \
-                                                     f'are considered as bad: the info of your MEG file is updated with those channels.'
-            warnings.warn(user_warning_message_channels_override)
-            dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message_channels_override})
-            raw.info['bads'] = bad_channels_override
-
-
-    # Read the events file
-    events_file_override_exists = False
-    if "events_override" in config.keys():
-        events_file = config.pop('events_override')
-        # Test if events file exists
-        if os.path.exists(events_file) is False:
-            events_file = None
-        else:
-            if events_file_exists:
-                user_warning_message_events_file = f"You provided two events files: by default, the file written by " \
-                                                   f"app-get-events will be used."
-                warnings.warn(user_warning_message_events_file)
-                dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message_events_file}) 
-
-            events_file_override_exists = True
-            shutil.copy2(events_file, 'out_dir_make_epochs/events.tsv')  # required to run a pipeline on BL
+        raw, user_warning_message_channels = helper.update_data_info_bads(raw, channels_file)
+        if user_warning_message_channels is not None: 
+            warnings.warn(user_warning_message_channels)
+            dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message_channels})
 
 
     ## Extract the matrix of events ##
 
     # Test if an events file is given 
-    if events_file_override_exists is False and events_file_exists is False:
+    if events_file is None:
         value_error_message = f'You need to provide events.tsv to make epochs. ' \
                               f'Please use the app-get-events to create such file.'  
         # Raise exception
         raise ValueError(value_error_message) 
     # Get the matrix of events    
-    elif events_file_override_exists or events_file_exists:
+    elif events_file is not None:
+            # Warning: events file must be BIDS compliant  
+            user_warning_message_events = f'The events file provided must be ' \
+                                          f'BIDS compliant.'        
+            warnings.warn(user_warning_message_events)
+            dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message_events})
             ############### TO BE TESTED ON NO RESTING STATE DATA
             # Compute the events matrix #
             df_events = pd.read_csv(events_file, sep='\t')
@@ -262,11 +174,6 @@ def main():
 
             # Convert dataframe to numpy array
             events_matrix = df_events_matrix.to_numpy()
-  
-    
-    # Convert all "" into None when the App runs on BL
-    tmp = dict((k, None) for k, v in config.items() if v == "")
-    config.update(tmp)
 
 
     ## Convert parameters ## 
@@ -339,14 +246,8 @@ def main():
     if isinstance(config['param_detrend'], str):
         config['param_detrend'] = int(config['param_detrend'])
 
-
-    ## Define kwargs ##
-
     # Delete keys values in config.json when this app is executed on Brainlife
-    if '_app' and '_tid' and '_inputs' and '_outputs' in config.keys():
-        del config['_app'], config['_tid'], config['_inputs'], config['_outputs'] 
-    kwargs = config  
-
+    kwargs = helper.define_kwargs(config)
 
     # Epoch data
     epoched_data = make_epochs(raw, events_matrix, **kwargs)
