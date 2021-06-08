@@ -103,6 +103,9 @@ def make_epochs(raw, events_matrix, param_event_id, param_tmin, param_tmax, para
                               on_missing=param_on_missing, reject_by_annotation=param_reject_by_annotation,
                               metadata=param_metadata, event_repeated=param_event_repeated)
 
+    # Delete raw to save memory
+    del raw
+
     # Save file
     epoched_data.save("out_dir_make_epochs/meg.fif", overwrite=True)
 
