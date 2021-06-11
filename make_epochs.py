@@ -7,7 +7,7 @@ import warnings
 import shutil
 import os 
 import pandas as pd
-import helper
+from brainlife_apps_helper import helper
 
 
 def make_epochs(raw, events_matrix, param_event_id, param_tmin, param_tmax, param_baseline,
