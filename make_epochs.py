@@ -4,7 +4,6 @@ import json
 import mne
 import numpy as np
 import warnings
-import shutil
 import os 
 import pandas as pd
 from brainlife_apps_helper import helper
